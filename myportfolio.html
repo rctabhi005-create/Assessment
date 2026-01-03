@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ABHI | Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0f172a;
+      color: #e5e7eb;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1f2937, #0f172a);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      color: #38bdf8;
+    }
+
+    nav a {
+      color: #e5e7eb;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: #38bdf8;
+    }
+
+    .hero {
+      min-height: 80vh;
+      padding: 60px 40px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      background: radial-gradient(circle at top left, #1d4ed8 0, #0f172a 50%);
+    }
+
+    .hero-text {
+      max-width: 520px;
+    }
+
+    .hero-text h1 {
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+    }
+
+    .hero-text h2 {
+      font-size: 1.2rem;
+      color: #a5b4fc;
+      margin-bottom: 16px;
+    }
+
+    .hero-text p {
+      font-size: 0.98rem;
+      margin-bottom: 22px;
+      color: #cbd5f5;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: 1px solid #38bdf8;
+      background: #0f172a;
+      color: #e5e7eb;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .btn.primary {
+      background: #38bdf8;
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .hero-card {
+      background: rgba(15,23,42,0.8);
+      border-radius: 16px;
+      padding: 18px 22px;
+      border: 1px solid rgba(148,163,184,0.4);
+      backdrop-filter: blur(10px);
+      max-width: 320px;
+    }
+
+    .hero-card h3 {
+      font-size: 1rem;
+      margin-bottom: 6px;
+      color: #e5e7eb;
+    }
+
+    .hero-card p {
+      font-size: 0.86rem;
+      color: #cbd5f5;
+    }
+
+    section {
+      padding: 50px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    section h2 {
+      font-size: 1.6rem;
+      margin-bottom: 18px;
+      color: #e5e7eb;
+    }
+
+    .section-subtitle {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-bottom: 22px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .about-text p {
+      font-size: 0.96rem;
+      color: #d1d5db;
+      margin-bottom: 14px;
+    }
+
+    .about-list li {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      color: #e5e7eb;
+    }
+
+    .card-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: #020617;
+      border-radius: 12px;
+      padding: 16px 18px;
+      border: 1px solid #1f2937;
+      transition: transform 0.15s, box-shadow 0.15s, border 0.15s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+      border-color: #38bdf8;
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+      color: #e5e7eb;
+    }
+
+    .card p {
+      font-size: 0.86rem;
+      color: #cbd5f5;
+      margin-bottom: 10px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #0f172a;
+      border: 1px solid #1d4ed8;
+      color: #e5e7eb;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+    }
+
+    .skill-group h3 {
+      font-size: 0.98rem;
+      margin-bottom: 8px;
+      color: #e5e7eb;
+    }
+
+    .skill-group ul {
+      list-style: none;
+    }
+
+    .skill-group li {
+      font-size: 0.9rem;
+      color: #d1d5db;
+      margin-bottom: 4px;
+    }
+
+    .contact-box {
+      background: #020617;
+      border-radius: 12px;
+      padding: 20px 22px;
+      border: 1px solid #1f2937;
+      max-width: 520px;
+    }
+
+    .contact-box p {
+      font-size: 0.9rem;
+      color: #d1d5db;
+      margin-bottom: 12px;
+    }
+
+    .contact-box a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .contact-box a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      border-top: 1px solid #1f2937;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 14px 18px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .hero {
+        padding: 40px 18px;
+      }
+      section {
+        padding: 34px 18px;
+      }
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">ABHI</div>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Hi, I am ABHI</h1>
+      <h2>Student · Aspiring Developer</h2>
+      <p>
+        Passionate about technology, problem solving, and building clean, user-friendly
+        projects. Always learning new tools and improving step by step.
+      </p>
+      <div class="btn-row">
+        <a href="#projects" class="btn primary">View Projects</a>
+        <a href="#contact" class="btn">Contact Me</a>
+      </div>
+    </div>
+
+    <div class="hero-card">
+      <h3>Quick Snapshot</h3>
+      <p>
+        • Curious learner focused on coding fundamentals<br>
+        • Interested in web development & real-world projects<br>
+        • Open to internships, hackathons, and collaborations
+      </p>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2>About Me</h2>
+    <p class="section-subtitle">A short introduction about ABHI.</p>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          ABHI is a motivated student who enjoys exploring programming, web
+          technologies, and how software can solve everyday problems.
+        </p>
+        <p>
+          Beyond academics, ABHI likes experimenting with small projects,
+          learning from online resources, and steadily building a strong technical
+          foundation for a future career in tech.
+        </p>
+      </div>
+      <ul class="about-list">
+        <li><strong>Name:</strong> ABHI</li>
+        <li><strong>Role:</strong> Student / Developer</li>
+        <li><strong>Location:</strong> India</li>
+        <li><strong>Focus Areas:</strong> Programming, web development, problem solving</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="projects">
+    <h2>Projects</h2>
+    <p class="section-subtitle">
+      A few sample projects that represent ABHI’s interests. Replace with real work later.
+    </p>
+    <div class="card-row">
+      <div class="card">
+        <h3>Portfolio Website</h3>
+        <p>
+          A clean, single-page portfolio built with HTML and CSS to showcase personal
+          information, projects, and contact details.
+        </p>
+        <div class="tag-row">
+          <span class="tag">HTML</span>
+          <span class="tag">CSS</span>
+          <span class="tag">Responsive</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Mini Web App</h3>
+        <p>
+          A small interactive web page using JavaScript for basic input handling,
+          simple calculations, or to-do style functionality.
+        </p>
+        <div class="tag-row">
+          <span class="tag">JavaScript</span>
+          <span class="tag">UI</span>
+          <span class="tag">Logic</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Learning Projects</h3>
+        <p>
+          Practice programs focusing on loops, arrays, functions, and basic data structures
+          to strengthen logical thinking and coding skills.
+        </p>
+        <div class="tag-row">
+          <span class="tag">C / C++</span>
+          <span class="tag">Problem Solving</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <h2>Skills</h2>
+    <p class="section-subtitle">
+      Technologies and abilities ABHI is learning and improving.
+    </p>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <h3>Programming</h3>
+        <ul>
+          <li>C (basics)</li>
+          <li>C++ (basics)</li>
+          <li>Java (basics)</li>
+        </ul>
+      </div>
+      <div class="skill-group">
+        <h3>Web</h3>
+        <ul>
+          <li>HTML5</li>
+          <li>CSS3</li>
+          <li>Basic responsive design</li>
+        </ul>
+      </div>
+      <div class="skill-group">
+        <h3>Other</h3>
+        <ul>
+          <li>Problem solving</li>
+          <li>Teamwork & communication</li>
+          <li>Fast learner</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p class="section-subtitle">
+      Ways to reach out to ABHI for opportunities or collaboration.
+    </p>
+    <div class="contact-box">
+      <p>
+        Feel free to get in touch for project discussions, internship opportunities,
+        or just to connect and share ideas.
+      </p>
+      <p>
+        Email:
+        <a href="mailto:rctabhi005@gmail.com">MY mail</a>
+      </p>
+      <p>
+        LinkedIn / GitHub links can be added here once accounts are ready.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    © 2026 ABHI. All rights reserved.
+  </footer>
+
+</body>
+</html>
