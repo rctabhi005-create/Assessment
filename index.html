@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>For you, always</title>
+<style>
+:root{--night:#120e28;--plum:#2b1a45;--gold:#f3d9b1;--rose:#ff6b88;--blush:#f4b8c1;--ink:#fff8ee}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--night);color:var(--ink);overflow:hidden;font-family:Georgia,"Times New Roman",serif}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 120%,var(--plum),transparent 65%),radial-gradient(ellipse at 20% -10%,#3a1f5c55,transparent 60%)}
+.stage{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+.line{font-size:clamp(1.35rem,4.6vw,2.4rem);line-height:1.5;max-width:30ch;font-style:italic;font-weight:400;opacity:0;transform:translateY(10px);transition:opacity 1.4s ease,transform 1.4s ease;margin:.35em 0;text-wrap:balance}
+.line.show{opacity:1;transform:none}
+.line b{font-style:normal;color:var(--gold);font-weight:400}
+h1{font-size:clamp(2.6rem,11vw,6rem);font-weight:400;font-style:italic;letter-spacing:.01em;line-height:1.05;color:var(--gold);text-shadow:0 0 40px #ff6b8866;opacity:0;transition:opacity 2s}
+h1.show{opacity:1}
+.sub{margin-top:1.2rem;opacity:0;transition:opacity 2s 1s;color:var(--blush);font-size:1.05rem}
+.sub.show{opacity:.9}
+button{font:inherit;cursor:pointer;border:1px solid var(--gold);background:transparent;color:var(--gold);padding:.85em 2.2em;border-radius:999px;font-size:1.05rem;letter-spacing:.04em;opacity:0;pointer-events:none;transition:opacity 1s,background .3s,color .3s,transform .3s}
+button.show{opacity:1;pointer-events:auto}
+button:hover,button:focus-visible{background:var(--gold);color:var(--night);outline:none}
+.next{margin-top:2.2rem}
+#ask{display:none}
+#ask h2{font-size:clamp(2.1rem,8.5vw,4.4rem);font-weight:400;font-style:italic;color:var(--ink);line-height:1.15;text-shadow:0 0 50px #ff6b88aa;opacity:0;transition:opacity 2s;text-wrap:balance}
+#ask h2.show{opacity:1}
+.btns{display:flex;gap:1.4rem;align-items:center;justify-content:center;margin-top:2.6rem;min-height:70px;flex-wrap:wrap}
+#yes{background:var(--rose);border-color:var(--rose);color:#fff;font-size:1.2rem;animation:beat 1.6s ease-in-out infinite}
+#yes:hover,#yes:focus-visible{background:#fff;color:var(--rose)}
+#no{position:relative}
+@keyframes beat{50%{transform:scale(1.08)}}
+#final{display:none}
+#final .line{max-width:26ch}
+.date{margin-top:1.6rem;color:var(--blush);font-size:1rem;opacity:0;transition:opacity 2s 3s}
+.date.show{opacity:.85}
+.hint{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:0;right:0;text-align:center;font-size:.85rem;color:var(--blush);opacity:.55}
+#setup .card{max-width:420px;width:100%}
+#setup h2{font-size:clamp(1.6rem,6vw,2.3rem);font-weight:400;font-style:italic;color:var(--gold);margin-bottom:1.4rem;text-wrap:balance}
+#setup .step{display:none;flex-direction:column;align-items:center;gap:1rem;animation:rise .9s ease both}
+#setup .step.on{display:flex}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+input[type=text],input[type=date]{width:100%;font:inherit;font-size:1.2rem;text-align:center;color:var(--ink);background:#ffffff12;border:1px solid #f3d9b155;border-radius:14px;padding:.8em 1em;outline:none;color-scheme:dark}
+input:focus{border-color:var(--gold);background:#ffffff1c}
+label{font-size:.9rem;color:var(--blush);align-self:flex-start;margin-top:.4rem}
+.opts{display:flex;flex-direction:column;gap:.8rem;width:100%}
+.opts button{width:100%}
+.err{color:var(--rose);font-size:.9rem;min-height:1.2em}
+@media (prefers-reduced-motion:reduce){#yes{animation:none}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<canvas id="c"></canvas>
+
+<div class="stage" id="setup">
+  <div class="card">
+    <div class="step on" id="s1">
+      <h2>Who is this special person?</h2>
+      <input type="text" id="herName" placeholder="Their name" maxlength="30" autocomplete="off">
+      <div class="err" id="e1"></div>
+      <button class="show" id="n1">Next</button>
+    </div>
+    <div class="step" id="s2">
+      <h2>And they are…</h2>
+      <div class="opts">
+        <button class="show" data-g="she">Girlfriend / She</button>
+        <button class="show" data-g="he">Boyfriend / He</button>
+        <button class="show" data-g="they">Prefer not to say / They</button>
+      </div>
+    </div>
+    <div class="step" id="s3">
+      <h2>Now, what's your name?</h2>
+      <input type="text" id="himName" placeholder="Your name" maxlength="30" autocomplete="off">
+      <label for="since">The day you got together (optional)</label>
+      <input type="date" id="since">
+      <div class="err" id="e3"></div>
+      <button class="show" id="n3">Begin ♥</button>
+    </div>
+  </div>
+</div>
+
+<div class="stage" id="intro" style="display:none">
+  <h1 id="title"></h1>
+  <p class="sub" id="subtitle">I made something for you.</p>
+  <button class="next show" id="begin" style="margin-top:2.4rem;animation:none;opacity:0">Open it</button>
+</div>
+
+<div class="stage" id="story" style="display:none">
+  <div id="lines"></div>
+  <button class="next" id="next">Continue</button>
+</div>
+
+<div class="stage" id="ask">
+  <h2 id="q"></h2>
+  <div class="btns">
+    <button id="yes">Yes</button>
+    <button id="no">No</button>
+  </div>
+</div>
+
+<div class="stage" id="final">
+  <div id="flines"></div>
+  <p class="date" id="date"></p>
+</div>
+
+<div class="hint" id="hint"></div>
+
+<script>
+/* ============ EDIT THIS PART ============ */
+const CONFIG = {
+  her: "My Love",               // her name
+  him: "Your Name",             // your name
+  since: "2023-02-14",          // date you got together (YYYY-MM-DD) or "" to skip
+  proposalWord: "Will you marry me?",   // the big question
+  scenes: [
+    ["Before you,", "I thought I knew what <b>happy</b> felt like."],
+    ["Then you laughed at my worst joke", "and the whole day turned golden."],
+    ["Somewhere between the small things,", "the long talks, the quiet mornings,", "I found <b>home</b> — and it was you."],
+    ["You make me braver.", "You make me softer.", "You make me <b>better</b>."],
+    ["I looked up at all the stars,", "and none of them could compete", "with the way you look at me."],
+    ["So I want to ask you", "something I've been", "dreaming of for a long time…"]
+  ],
+  finalLines: [
+    "You just made me the happiest person alive.",
+    "I promise to choose you every single day —",
+    "in the easy times, and the hard ones."
+  ],
+  signOff: "Forever yours, "
+};
+/* ======================================== */
+
+const $=id=>document.getElementById(id), sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+/* Optional: set PRESET to skip the setup screens, e.g. {her:"Priya",gender:"she",him:"Arjun",since:"2023-02-14"} */
+const PRESET=null;
+const PRON={she:"She",he:"He",they:"They"};
+let gender='she';
+function startIntro(){
+  $('setup').style.transition='opacity .8s';$('setup').style.opacity=0;
+  setTimeout(()=>{$('setup').style.display='none';$('intro').style.display='flex';
+    $('title').textContent=CONFIG.her;
+    setTimeout(()=>$('title').classList.add('show'),300);
+    setTimeout(()=>$('subtitle').classList.add('show'),300);
+    setTimeout(()=>{$('begin').style.opacity=1;$('begin').classList.add('show')},3200);
+    $('hint').textContent='Best with your screen bright and the sound on.';},800);
+}
+function go(n){document.querySelectorAll('#setup .step').forEach(s=>s.classList.remove('on'));$('s'+n).classList.add('on');
+  const i=$(n===1?'herName':n===3?'himName':'n1');if(n!==2)setTimeout(()=>i.focus(),100)}
+const cap=s=>s.trim().replace(/\s+/g,' ');
+$('n1').onclick=()=>{const v=cap($('herName').value);if(!v){$('e1').textContent='Please enter a name';return}CONFIG.her=v;go(2)};
+document.querySelectorAll('#s2 button').forEach(b=>b.onclick=()=>{gender=b.dataset.g;go(3)});
+$('n3').onclick=()=>{const v=cap($('himName').value);if(!v){$('e3').textContent='Please enter your name';return}
+  CONFIG.him=v;CONFIG.since=$('since').value||'';startIntro()};
+$('herName').addEventListener('keydown',e=>{if(e.key==='Enter')$('n1').click()});
+$('himName').addEventListener('keydown',e=>{if(e.key==='Enter')$('n3').click()});
+if(PRESET){CONFIG.her=PRESET.her;gender=PRESET.gender||'she';CONFIG.him=PRESET.him;CONFIG.since=PRESET.since||'';
+  $('setup').style.display='none';$('setup').style.opacity=0;startIntro()}
+setTimeout(()=>{if($('s1').classList.contains('on'))$('herName').focus()},300);
+
+/* ---------- canvas: stars, shooting stars, heart constellation, fireworks ---------- */
+const cv=$('c'),ctx=cv.getContext('2d');let W,H,DPR=Math.min(devicePixelRatio||1,2);
+function size(){W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
+addEventListener('resize',()=>{size();if(heart)setTargets()});size();
+const N=W<600?110:180;
+const stars=Array.from({length:N},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+.3,t:Math.random()*6.3,s:Math.random()*.02+.005,tx:null,ty:null}));
+let heart=false,shoots=[],sparks=[],floaters=[],glow=0;
+function setTargets(){
+  const cx=W/2,cy=H*(W<600?.3:.36),sc=Math.min(W,H)/(W<600?44:38);
+  stars.forEach((s,i)=>{const t=i/N*Math.PI*2+Math.random()*.02;
+    const k=.82+Math.random()*.18;
+    s.tx=cx+16*Math.pow(Math.sin(t),3)*sc*k;
+    s.ty=cy-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*sc*k;});
+}
+function formHeart(){heart=true;setTargets()}
+function firework(x,y){const hue=330+Math.random()*50;
+  for(let i=0;i<70;i++){const a=Math.random()*6.3,v=Math.random()*5+1.5;
+    sparks.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:1,h:hue+Math.random()*30,w:Math.random()*2+1})}}
+function floatHeart(){floaters.push({x:Math.random()*W,y:H+20,s:Math.random()*16+10,v:Math.random()*1.2+.5,p:Math.random()*6,a:Math.random()*.5+.4})}
+function frame(){
+  ctx.clearRect(0,0,W,H);
+  if(!reduce&&Math.random()<.008)shoots.push({x:Math.random()*W,y:Math.random()*H*.4,vx:6+Math.random()*4,vy:2+Math.random()*2,l:1});
+  shoots=shoots.filter(s=>s.l>0);
+  shoots.forEach(s=>{ctx.strokeStyle=`rgba(255,240,220,${s.l})`;ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(s.x-s.vx*7,s.y-s.vy*7);ctx.stroke();s.x+=s.vx;s.y+=s.vy;s.l-=.018});
+  stars.forEach(s=>{
+    if(heart&&s.tx!=null){s.x+=(s.tx-s.x)*.02;s.y+=(s.ty-s.y)*.02}
+    s.t+=s.s;const a=.45+.55*Math.sin(s.t);
+    ctx.fillStyle=heart?`rgba(255,${190+a*40|0},${200},${.5+a*.5})`:`rgba(255,248,235,${a})`;
+    ctx.beginPath();ctx.arc(s.x,s.y,s.r*(heart?1.5:1),0,6.3);ctx.fill();
+  });
+  if(heart){glow=Math.min(glow+.004,1);
+    const g=ctx.createRadialGradient(W/2,H*(W<600?.3:.36),0,W/2,H*(W<600?.3:.36),Math.min(W,H)*.45);
+    g.addColorStop(0,`rgba(255,107,136,${.22*glow})`);g.addColorStop(1,'rgba(255,107,136,0)');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
+  sparks=sparks.filter(p=>p.life>0);
+  sparks.forEach(p=>{ctx.fillStyle=`hsla(${p.h},95%,70%,${p.life})`;ctx.beginPath();ctx.arc(p.x,p.y,p.w,0,6.3);ctx.fill();p.x+=p.vx;p.y+=p.vy;p.vy+=.05;p.vx*=.985;p.life-=.012});
+  floaters=floaters.filter(f=>f.y>-30);
+  floaters.forEach(f=>{f.y-=f.v;f.x+=Math.sin(f.y/40+f.p)*.6;ctx.globalAlpha=f.a;ctx.fillStyle='#ff6b88';ctx.font=f.s+'px serif';ctx.fillText('♥',f.x,f.y);ctx.globalAlpha=1});
+  requestAnimationFrame(frame)}
+frame();
+
+/* ---------- story flow ---------- */
+let scene=0;
+async function showScene(i){
+  const box=$('lines');box.innerHTML='';$('next').classList.remove('show');
+  for(const t of CONFIG.scenes[i]){
+    const d=document.createElement('div');d.className='line';d.innerHTML=t;box.appendChild(d);
+    await sleep(60);d.classList.add('show');await sleep(reduce?600:1900);
+  }
+  $('next').textContent=i===CONFIG.scenes.length-1?'I\'m ready':'Continue';
+  $('next').classList.add('show');
+}
+$('begin').onclick=()=>{$('hint').textContent='';$('intro').style.transition='opacity 1s';$('intro').style.opacity=0;
+  setTimeout(()=>{$('intro').style.display='none';$('story').style.display='flex';showScene(0)},900)};
+$('next').onclick=async()=>{
+  if(scene<CONFIG.scenes.length-1){scene++;showScene(scene);return}
+  $('story').style.transition='opacity 1s';$('story').style.opacity=0;await sleep(1000);
+  $('story').style.display='none';formHeart();await sleep(3500);
+  const a=$('ask');a.style.display='flex';a.style.justifyContent='flex-end';a.style.paddingBottom='10vh';
+  $('q').textContent=CONFIG.her+', '+CONFIG.proposalWord.charAt(0).toLowerCase()+CONFIG.proposalWord.slice(1);
+  await sleep(100);$('q').classList.add('show');await sleep(2200);
+  $('yes').classList.add('show');$('no').classList.add('show');
+};
+
+/* ---------- the "No" button has other plans ---------- */
+const no=$('no'),noText=["No","Are you sure?","Think again 🥺","Really?","Nope, not an option","Try the other one","Pretty please?"];let nc=0,scale=1;
+function dodge(e){
+  if(e&&e.preventDefault)e.preventDefault();
+  nc++;no.textContent=noText[nc%noText.length];
+  const m=20,bw=no.offsetWidth,bh=no.offsetHeight;
+  no.style.position='fixed';
+  no.style.left=m+Math.random()*(W-bw-2*m)+'px';
+  no.style.top=m+Math.random()*(H-bh-2*m)+'px';
+  scale=Math.min(scale+.18,2.4);$('yes').style.fontSize=1.2*scale+'rem';
+}
+no.addEventListener('mouseenter',dodge);no.addEventListener('touchstart',dodge,{passive:false});no.addEventListener('click',dodge);
+
+/* ---------- she said yes ---------- */
+$('yes').onclick=async()=>{
+  $('ask').style.transition='opacity 1.2s';$('ask').style.opacity=0;
+  for(let i=0;i<12;i++)setTimeout(()=>firework(W*(.15+Math.random()*.7),H*(.15+Math.random()*.4)),i*260);
+  setInterval(()=>{if(Math.random()<.6)floatHeart();if(Math.random()<.04)firework(W*Math.random(),H*(.1+Math.random()*.4))},180);
+  try{chime()}catch(e){}
+  await sleep(1300);$('ask').style.display='none';
+  const f=$('final');f.style.display='flex';f.style.justifyContent='flex-end';f.style.paddingBottom='9vh';
+  const h=document.createElement('h1');h.textContent=PRON[gender]+' said yes.';h.style.fontSize='clamp(2.4rem,10vw,5rem)';
+  $('flines').appendChild(h);await sleep(80);h.classList.add('show');await sleep(2200);
+  for(const t of CONFIG.finalLines){const d=document.createElement('div');d.className='line';d.textContent=t;$('flines').appendChild(d);await sleep(60);d.classList.add('show');await sleep(2200)}
+  const s=document.createElement('div');s.className='line';s.innerHTML='<b>'+CONFIG.signOff+CONFIG.him+' ♥</b>';$('flines').appendChild(s);await sleep(60);s.classList.add('show');
+  if(CONFIG.since){const d=new Date(CONFIG.since),days=Math.floor((Date.now()-d)/864e5);
+    $('date').textContent='Together for '+days+' days, and counting forever.';}
+  $('date').classList.add('show');
+};
+function chime(){const A=new (window.AudioContext||window.webkitAudioContext)();
+  [523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>{const o=A.createOscillator(),g=A.createGain();
+    o.type='sine';o.frequency.value=f;o.connect(g);g.connect(A.destination);
+    const t=A.currentTime+i*.18;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.18,t+.03);g.gain.exponentialRampToValueAtTime(.001,t+2.2);
+    o.start(t);o.stop(t+2.3)})}
+</script>
+</body>
+</html>
